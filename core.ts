@@ -6,8 +6,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-
-export type { ParsedComment } from "./comment-watcher/types.js";
+import type { ParsedComment } from "./types.js";
 
 /**
  * Create a unique key for a comment.
@@ -134,6 +133,7 @@ export function createAIMessage(comments: ParsedComment[]): string {
 
 	let message = "The AI comments below can be found in the code files.\n";
 	message += "They contain your instructions.\n";
+	message += "Line numbers are provided for reference.\n";
 	message += "Rules:\n";
 	message += "- Only make changes to files and lines that have AI comments.\n";
 	message += "- Do not modify any other files or areas of files.\n";
@@ -144,8 +144,9 @@ export function createAIMessage(comments: ParsedComment[]): string {
 	for (const comment of comments) {
 		const relativePath = getRelativePath(comment.filePath, process.cwd());
 		message += `${relativePath}:\n`;
-		for (const rawLine of comment.rawLines) {
-			message += `${rawLine}\n`;
+		for (let i = 0; i < comment.rawLines.length; i++) {
+			const lineNumber = comment.lineNumber + i;
+			message += `${lineNumber}: ${comment.rawLines[i]}\n`;
 		}
 		message += "\n";
 	}

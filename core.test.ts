@@ -218,6 +218,114 @@ describe("createAIMessage", () => {
 	it("should return empty string for no comments", () => {
 		expect(createAIMessage([])).toBe("");
 	});
+
+	it("should output line numbers before each comment line", () => {
+		const comments = [
+			{
+				filePath: "/path/to/file.ts",
+				lineNumber: 12,
+				rawLines: ["// AI! Add error handling"],
+				hasTrigger: true,
+			},
+		];
+
+		const message = createAIMessage(comments);
+		expect(message).toContain("12: // AI! Add error handling");
+	});
+
+	it("should output line numbers for each line in a multiline comment block", () => {
+		const comments = [
+			{
+				filePath: "/path/to/file.py",
+				lineNumber: 45,
+				rawLines: ["# Another thing here", "# Now with multiple lines, AI"],
+				hasTrigger: true,
+			},
+		];
+
+		const message = createAIMessage(comments);
+		expect(message).toContain("45: # Another thing here");
+		expect(message).toContain("46: # Now with multiple lines, AI");
+	});
+
+	it("should handle multiple comment groups with correct line numbers", () => {
+		const comments = [
+			{
+				filePath: "/path/to/file.ext",
+				lineNumber: 12,
+				rawLines: ["# Here's something to do, AI"],
+				hasTrigger: true,
+			},
+			{
+				filePath: "/path/to/file.ext",
+				lineNumber: 45,
+				rawLines: ["# Another thing here", "# Now with multiple lines, AI"],
+				hasTrigger: true,
+			},
+			{
+				filePath: "/path/to/file.ext",
+				lineNumber: 70,
+				rawLines: ["# And finally a trigger, AI!"],
+				hasTrigger: true,
+			},
+		];
+
+		const message = createAIMessage(comments);
+		expect(message).toContain("12: # Here's something to do, AI");
+		expect(message).toContain("45: # Another thing here");
+		expect(message).toContain("46: # Now with multiple lines, AI");
+		expect(message).toContain("70: # And finally a trigger, AI!");
+	});
+
+	it("should include line numbers in the prompt instructions", () => {
+		const comments = [
+			{
+				filePath: "/path/to/file.ts",
+				lineNumber: 1,
+				rawLines: ["// AI! test"],
+				hasTrigger: true,
+			},
+		];
+
+		const message = createAIMessage(comments);
+		expect(message).toMatch(/line number/i);
+	});
+
+	it("should match expected format exactly", () => {
+		const comments = [
+			{
+				filePath: "/Users/test/project/src/file.ext",
+				lineNumber: 12,
+				rawLines: ["# Here's something to do, AI"],
+				hasTrigger: true,
+			},
+			{
+				filePath: "/Users/test/project/src/file.ext",
+				lineNumber: 45,
+				rawLines: ["# Another thing here", "# Now with multiple lines, AI"],
+				hasTrigger: true,
+			},
+			{
+				filePath: "/Users/test/project/src/file.ext",
+				lineNumber: 70,
+				rawLines: ["# And finally a trigger, AI!"],
+				hasTrigger: true,
+			},
+		];
+
+		const message = createAIMessage(comments);
+		const expected = [
+			"src/file.ext:",
+			"12: # Here's something to do, AI",
+			"45: # Another thing here",
+			"46: # Now with multiple lines, AI",
+			"70: # And finally a trigger, AI!",
+		];
+
+		for (const line of expected) {
+			expect(message).toContain(line);
+		}
+	});
 });
 
 describe("shouldIgnorePath", () => {
