@@ -43,8 +43,6 @@ export type WatcherFactory = (
 ) => FSWatcherLike;
 
 export interface FSWatcherLike {
-	/** Watch a path or array of paths */
-	watch(paths: string | string[], options?: Record<string, unknown>): FSWatcherLike;
 	/** Close the watcher */
 	close(): Promise<void>;
 	on(event: string, listener: (...args: unknown[]) => void): FSWatcherLike;
