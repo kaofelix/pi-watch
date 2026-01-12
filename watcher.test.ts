@@ -150,6 +150,28 @@ describe("CommentWatcher", () => {
 			expect(comment.filePath).toBe("/test/collect.ts");
 		});
 
+		it("should pass all pending comments as second parameter to onAIComment", () => {
+			const onAIComment = vi.fn();
+			const onAITrigger = vi.fn();
+			const watcher = createWatcher({ onAIComment, onAITrigger });
+
+			watcher.watch("/test");
+
+			// Add comments from multiple files
+			mockWatcher.emit("change", "/test/collect.ts");
+			mockWatcher.emit("change", "/test/collect2.ts");
+
+			expect(onAIComment).toHaveBeenCalledTimes(2);
+
+			// First call: only collect.ts pending
+			const firstCallAllPending = onAIComment.mock.calls[0][1] as ParsedComment[];
+			expect(firstCallAllPending).toHaveLength(1);
+
+			// Second call: both collect.ts and collect2.ts pending
+			const secondCallAllPending = onAIComment.mock.calls[1][1] as ParsedComment[];
+			expect(secondCallAllPending).toHaveLength(2);
+		});
+
 		it("should ignore non-AI comments", () => {
 			const onAIComment = vi.fn();
 			const onAITrigger = vi.fn();

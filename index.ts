@@ -39,6 +39,8 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	let commentWatcher: CommentWatcher | null = null;
+	let watchCwd: string | null = null;
+	let watchCtx: { hasUI: boolean; ui: { notify: (message: string, type: string) => void } } | null = null;
 
 	// Pause watching while agent is editing files to avoid re-triggering
 	pi.on("agent_start", async () => {
@@ -47,6 +49,9 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("agent_end", async () => {
 		commentWatcher?.resume();
+		if (watchCtx && watchCtx.hasUI && watchCwd) {
+			watchCtx.ui.notify(`Watching ${watchCwd} for AI comments...`, "info");
+		}
 	});
 
 	pi.on("session_start", async (_event, ctx) => {
@@ -55,22 +60,21 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		const cwd = ctx.cwd;
+		watchCwd = cwd;
+		watchCtx = { hasUI: ctx.hasUI, ui: ctx.ui };
 		const ignoredPatterns = [/.git/, /node_modules/, /dist/, /build/, /.pi/];
-
-		// Set initial status
-		if (ctx.hasUI) {
-			ctx.ui.setStatus("watch", `Watching ${cwd}`);
-		}
 
 		// Create comment watcher with Chokidar factory
 		commentWatcher = new CommentWatcher(
 			(paths, options) => chokidar.watch(paths, options),
 			{
-				onAIComment: (comment: ParsedComment) => {
+				onAIComment: (comment: ParsedComment, allPending: ParsedComment[]) => {
 					if (!ctx.hasUI) return;
-
-					const relativePath = getRelativePath(comment.filePath, cwd);
-					ctx.ui.notify(`AI comment found in ${relativePath} (waiting for AI! trigger)`, "info");
+					const uniqueFiles = new Set(allPending.map((c) => c.filePath));
+					ctx.ui.notify(
+						`${allPending.length} AI comment${allPending.length > 1 ? "s" : ""} collected from ${uniqueFiles.size} file${uniqueFiles.size > 1 ? "s" : ""}.`,
+						"info"
+					);
 				},
 
 				onAITrigger: (comments: ParsedComment[]) => {
@@ -126,5 +130,7 @@ export default function (pi: ExtensionAPI) {
 			commentWatcher.close();
 			commentWatcher = null;
 		}
+		watchCwd = null;
+		watchCtx = null;
 	});
 }
