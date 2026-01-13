@@ -2,6 +2,8 @@
 
 Watches for file changes in the current directory and scans for AI comments.
 
+> Inspired by [aider's watch mode](https://aider.chat/docs/usage/watch.html).
+
 ## Usage
 
 Run pi with the `--watch` flag:
