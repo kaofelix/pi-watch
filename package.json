@@ -1,6 +1,5 @@
 {
-	"name": "pi-extension-watch",
-	"private": true,
+	"name": "pi-watch",
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
