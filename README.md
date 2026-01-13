@@ -2,22 +2,6 @@
 
 Watches for file changes in the current directory and scans for AI comments.
 
-## Development
-
-```bash
-# Run tests
-npm test
-
-# Check code with Biome (lint + format)
-npm run check
-
-# Auto-fix Biome issues
-npm run check:fix
-
-# Format code with Biome
-npm run format
-```
-
 ## Usage
 
 Run pi with the `--watch` flag:
@@ -64,4 +48,20 @@ Consecutive AI comment lines are grouped together. If any line in the group has 
 ```javascript
 // Refactor this function
 // to use async/await instead of callbacks AI!
+```
+
+## Development
+
+```bash
+# Run tests
+npm test
+
+# Check code with Biome (lint + format)
+npm run check
+
+# Auto-fix Biome issues
+npm run check:fix
+
+# Format code with Biome
+npm run format
 ```
