@@ -97,6 +97,41 @@ describe("parseCommentsInFile", () => {
 		});
 	});
 
+	it("should NOT group comments where only some lines have AI markers", () => {
+		// Only the second line has AI!, first line is a regular comment
+		const content = [
+			"// This function processes user data",
+			"// but it has a race condition AI!",
+			"function foo() {}",
+		].join("\n");
+
+		const comments = parseCommentsInFile("/path/to/file.ts", content);
+		// Only the line with AI! should be detected
+		expect(comments).toHaveLength(1);
+		expect(comments[0]).toMatchObject({
+			lineNumber: 2,
+			rawLines: ["// but it has a race condition AI!"],
+			hasTrigger: true,
+		});
+	});
+
+	it("should group only when ALL consecutive lines have AI markers", () => {
+		// All lines have AI markers
+		const content = [
+			"// This function needs work AI",
+			"// fix the race condition AI!",
+			"function foo() {}",
+		].join("\n");
+
+		const comments = parseCommentsInFile("/path/to/file.ts", content);
+		expect(comments).toHaveLength(1);
+		expect(comments[0]).toMatchObject({
+			lineNumber: 1,
+			rawLines: ["// This function needs work AI", "// fix the race condition AI!"],
+			hasTrigger: true,
+		});
+	});
+
 	it("should handle multiple separate comment groups", () => {
 		const content = [
 			"// AI! first group",

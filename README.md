@@ -41,14 +41,19 @@ def calculate_total(items):
 
 AI comments can span multiple files. All comments are collected until an `AI!` trigger is found, then all are sent together.
 
-### Comment Groups
+### Multi-line Comments
 
-Consecutive AI comment lines are grouped together. If any line in the group has `AI!`, the entire group triggers the action.
+Multi-line comments work too! Add the `AI` marker to each line you want included:
 
 ```javascript
-// Refactor this function
-// to use async/await instead of callbacks AI!
+// This function needs work AI
+// fix the race condition AI!
+function process(data) {
+  return data.map(d => d.value);
+}
 ```
+
+Consecutive lines with `AI` markers are collected together and sent as one message.
 
 ## Development
 
