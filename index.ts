@@ -26,7 +26,7 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import chokidar from "chokidar";
-import { createAIMessage, getRelativePath } from "./core.js";
+import { DEFAULT_IGNORED_PATTERNS, createAIMessage, getRelativePath } from "./core.js";
 import type { ParsedComment } from "./types.js";
 import { CommentWatcher } from "./watcher.js";
 
@@ -62,7 +62,7 @@ export default function (pi: ExtensionAPI) {
 		const cwd = ctx.cwd;
 		watchCwd = cwd;
 		watchCtx = { hasUI: ctx.hasUI, ui: ctx.ui };
-		const ignoredPatterns = [/.git/, /node_modules/, /dist/, /build/, /.pi/];
+		const ignoredPatterns = DEFAULT_IGNORED_PATTERNS;
 
 		// Create comment watcher with Chokidar factory
 		commentWatcher = new CommentWatcher(

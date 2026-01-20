@@ -17,7 +17,7 @@
  *   watcher.watch("/path/to/watch");
  */
 
-import { hasTriggerComment, readFileAndParseComments, shouldIgnorePath } from "./core.js";
+import { DEFAULT_IGNORED_PATTERNS, hasTriggerComment, readFileAndParseComments, shouldIgnorePath } from "./core.js";
 import type {
 	CommentWatcherCallbacks,
 	CommentWatcherOptions,
@@ -27,7 +27,7 @@ import type {
 } from "./types.js";
 
 const DEFAULT_OPTIONS: Required<CommentWatcherOptions> = {
-	ignoredPatterns: [/.git/, /node_modules/, /dist/, /build/, /\.pi/],
+	ignoredPatterns: DEFAULT_IGNORED_PATTERNS,
 	cwd: process.cwd(),
 	ignoreInitial: true,
 	stabilityThreshold: 500,

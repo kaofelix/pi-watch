@@ -16,6 +16,8 @@ export function getCommentKey(comment: ParsedComment): string {
 	return `${comment.filePath}:${comment.lineNumber}:${hash}`;
 }
 
+export const DEFAULT_IGNORED_PATTERNS = [/\.git/, /node_modules/, /dist/, /build/, /\.pi/];
+
 // Comment styles: #, //, --
 // Position: start OR end of line
 // Case insensitive

@@ -4,6 +4,7 @@
 
 import { describe, expect, it } from "vitest";
 import {
+	DEFAULT_IGNORED_PATTERNS,
 	createAIMessage,
 	filterTriggerComments,
 	getCommentKey,
@@ -365,18 +366,30 @@ describe("createAIMessage", () => {
 
 describe("shouldIgnorePath", () => {
 	it("should ignore .git directories", () => {
-		const patterns = [/.git/, /node_modules/];
+		const patterns = DEFAULT_IGNORED_PATTERNS;
 		expect(shouldIgnorePath("/path/.git/file.txt", patterns)).toBe(true);
 	});
 
+	it("should ignore .pi directories", () => {
+		const patterns = DEFAULT_IGNORED_PATTERNS;
+		expect(shouldIgnorePath("/path/.pi/file.txt", patterns)).toBe(true);
+	});
+
 	it("should ignore node_modules directories", () => {
-		const patterns = [/.git/, /node_modules/];
+		const patterns = DEFAULT_IGNORED_PATTERNS;
 		expect(shouldIgnorePath("/path/node_modules/file.txt", patterns)).toBe(true);
 	});
 
 	it("should not ignore regular files", () => {
-		const patterns = [/.git/, /node_modules/];
+		const patterns = DEFAULT_IGNORED_PATTERNS;
 		expect(shouldIgnorePath("/path/src/file.ts", patterns)).toBe(false);
+	});
+
+	it("should NOT ignore paths containing 'pi' but not '.pi' (regression test)", () => {
+		const patterns = DEFAULT_IGNORED_PATTERNS;
+		expect(shouldIgnorePath("/Users/kaofelix/Code/pi-watch-demo/main.py", patterns)).toBe(false);
+		expect(shouldIgnorePath("/path/to/api/file.ts", patterns)).toBe(false);
+		expect(shouldIgnorePath("/path/to/pickle/file.py", patterns)).toBe(false);
 	});
 });
 
