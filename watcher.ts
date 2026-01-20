@@ -76,7 +76,9 @@ export class CommentWatcher {
 		this.isWatching = true;
 
 		this.fsWatcher
+			.on("add", this.handleChange.bind(this))
 			.on("change", this.handleChange.bind(this))
+			.on("unlink", this.handleChange.bind(this))
 			.on("ready", () => this.callbacks.onReady())
 			.on("error", (error: Error) => this.callbacks.onError(error));
 	}

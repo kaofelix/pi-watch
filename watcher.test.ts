@@ -434,4 +434,38 @@ describe("CommentWatcher", () => {
 			expect(onAITrigger).toHaveBeenCalled();
 		});
 	});
+
+	describe("file events", () => {
+		it("should handle file additions", () => {
+			const onAIComment = vi.fn();
+			const watcher = createWatcher({ onAIComment });
+			watcher.watch("/test");
+
+			mockWatcher.emit("add", "/test/collect.ts");
+
+			expect(onAIComment).toHaveBeenCalledTimes(1);
+			const comment = onAIComment.mock.calls[0][0] as ParsedComment;
+			expect(comment.filePath).toBe("/test/collect.ts");
+		});
+
+		it("should handle file deletions", () => {
+			const onAIComment = vi.fn();
+			const watcher = createWatcher({ onAIComment });
+			watcher.watch("/test");
+
+			// Add file first
+			mockWatcher.emit("add", "/test/collect.ts");
+			expect(watcher.getPendingComments()).toHaveLength(1);
+
+			// Update mock to throw error for this file to simulate deletion
+			mockReadFileSync.mockImplementation(() => {
+				throw new Error("File not found");
+			});
+
+			// Delete file
+			mockWatcher.emit("unlink", "/test/collect.ts");
+
+			expect(watcher.getPendingComments()).toHaveLength(0);
+		});
+	});
 });
