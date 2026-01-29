@@ -4,8 +4,8 @@
 
 import { describe, expect, it } from "vitest";
 import {
-	DEFAULT_IGNORED_PATTERNS,
 	createAIMessage,
+	DEFAULT_IGNORED_PATTERNS,
 	filterTriggerComments,
 	getCommentKey,
 	getRelativePath,

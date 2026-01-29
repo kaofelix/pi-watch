@@ -1,7 +1,30 @@
 {
 	"name": "pi-watch",
-	"version": "1.0.0",
+	"version": "0.1.0",
+	"description": "Pi extension that watches for AI comments in your code and sends them to the agent",
+	"author": "Kao Felix",
+	"license": "MIT",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kaofelix/pi-watch.git"
+	},
+	"bugs": {
+		"url": "https://github.com/kaofelix/pi-watch/issues"
+	},
+	"homepage": "https://github.com/kaofelix/pi-watch#readme",
+	"keywords": [
+		"pi-package",
+		"pi-extension",
+		"ai",
+		"file-watcher",
+		"coding-agent"
+	],
+	"files": [
+		"*.ts",
+		"README.md",
+		"LICENSE"
+	],
 	"scripts": {
 		"clean": "echo 'nothing to clean'",
 		"build": "echo 'nothing to build'",
@@ -22,5 +45,8 @@
 		"@biomejs/biome": "^2.3.11",
 		"@vitest/ui": "^4.0.17",
 		"vitest": "^4.0.17"
+	},
+	"peerDependencies": {
+		"@mariozechner/pi-coding-agent": "*"
 	}
 }

@@ -17,7 +17,12 @@
  *   watcher.watch("/path/to/watch");
  */
 
-import { DEFAULT_IGNORED_PATTERNS, hasTriggerComment, readFileAndParseComments, shouldIgnorePath } from "./core.js";
+import {
+	DEFAULT_IGNORED_PATTERNS,
+	hasTriggerComment,
+	readFileAndParseComments,
+	shouldIgnorePath,
+} from "./core.js";
 import type {
 	CommentWatcherCallbacks,
 	CommentWatcherOptions,

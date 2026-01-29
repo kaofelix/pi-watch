@@ -1,8 +1,20 @@
-# Watch Extension
+# pi-watch
 
-Watches for file changes in the current directory and scans for AI comments.
+A [pi](https://github.com/badlogic/pi) extension that watches for AI comments in your code and sends them to the agent.
 
 > Inspired by [aider's watch mode](https://aider.chat/docs/usage/watch.html).
+
+## Installation
+
+```bash
+pi install npm:pi-watch
+```
+
+Or try it without installing:
+
+```bash
+pi -e npm:pi-watch --watch
+```
 
 ## Usage
 
@@ -72,3 +84,7 @@ npm run check:fix
 # Format code with Biome
 npm run format
 ```
+
+## License
+
+MIT

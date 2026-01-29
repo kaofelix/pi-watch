@@ -26,7 +26,7 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import chokidar from "chokidar";
-import { DEFAULT_IGNORED_PATTERNS, createAIMessage, getRelativePath } from "./core.js";
+import { createAIMessage, DEFAULT_IGNORED_PATTERNS } from "./core.js";
 import type { ParsedComment } from "./types.js";
 import { CommentWatcher } from "./watcher.js";
 
@@ -40,7 +40,8 @@ export default function (pi: ExtensionAPI) {
 
 	let commentWatcher: CommentWatcher | null = null;
 	let watchCwd: string | null = null;
-	let watchCtx: { hasUI: boolean; ui: { notify: (message: string, type: string) => void } } | null = null;
+	let watchCtx: { hasUI: boolean; ui: { notify: (message: string, type: string) => void } } | null =
+		null;
 
 	// Pause watching while agent is editing files to avoid re-triggering
 	pi.on("agent_start", async () => {
@@ -49,7 +50,7 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("agent_end", async () => {
 		commentWatcher?.resume();
-		if (watchCtx && watchCtx.hasUI && watchCwd) {
+		if (watchCtx?.hasUI && watchCwd) {
 			watchCtx.ui.notify(`Watching ${watchCwd} for AI comments...`, "info");
 		}
 	});
@@ -68,7 +69,7 @@ export default function (pi: ExtensionAPI) {
 		commentWatcher = new CommentWatcher(
 			(paths, options) => chokidar.watch(paths, options),
 			{
-				onAIComment: (comment: ParsedComment, allPending: ParsedComment[]) => {
+				onAIComment: (_comment: ParsedComment, allPending: ParsedComment[]) => {
 					if (!ctx.hasUI) return;
 					const uniqueFiles = new Set(allPending.map((c) => c.filePath));
 					ctx.ui.notify(
